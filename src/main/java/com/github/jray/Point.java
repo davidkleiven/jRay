@@ -32,4 +32,16 @@ public class Point{
         double z = other.getZ() - this.getZ();
         return new Point(x, y, z);
     }
+
+    /**
+     * @param other Point to make the cross product with
+     * @return Point representing the cross product
+     */
+    public Point cross(Point other)
+    {
+        double x = this.getY()*other.getZ() - this.getZ()*other.getY();
+        double y = -(this.getX()*other.getZ() - this.getZ()*other.getX());
+        double z = this.getX()*other.getY() - this.getY()*other.getX();
+        return new Point(x, y, z);
+    }
 }

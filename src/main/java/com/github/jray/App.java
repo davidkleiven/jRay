@@ -1,4 +1,4 @@
-package com.github.app;
+package com.github.jray;
 
 /**
  * Hello world!

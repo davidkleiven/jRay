@@ -52,6 +52,32 @@ public class GMSHReader
     }
 
     /**
+     * Extract the element type
+     * @param line
+     * @return Element type
+     */
+    protected int elementType(String line)
+    {
+        String elemType = line.split(" ")[2];
+        return Integer.parseInt(elemType);
+    }
+
+    /**
+     * Extract 0-indexed ID of nodes
+     * @param line
+     * @return
+     */
+    protected int[] triangleElementNodeIds(String line)
+    {
+        String[] partitioned = line.split(" ");
+        int[] nodeIds = new int[3];
+        for (int i=1;i<partitioned.length;i++){
+            nodeIds[i-1] = Integer.parseInt(partitioned[i]) - 1;
+        }
+        return nodeIds;
+    }
+
+    /**
      * @param fname GMSH mesh filename
      */
     public TriangleMesh readGMSH(String fname)
@@ -59,6 +85,8 @@ public class GMSHReader
         GMSHSection section = GMSHSection.UNKNOWN;
         TriangleMesh mesh = new TriangleMesh();
         int numNodes = -1;
+        int numElements = -1;
+        int elementType = -1;
 
         try(BufferedReader br = Files.newBufferedReader(Paths.get(fname))){
             String line;
@@ -71,6 +99,8 @@ public class GMSHReader
                     continue;
                 }
                 else if (line.startsWith("$End")){
+                    numInBlock = -1;
+                    numReadFromBlock = 0;
                     section = GMSHSection.UNKNOWN;
                     continue;
                 }
@@ -104,6 +134,24 @@ public class GMSHReader
                         numReadFromBlock += 1;
                         break;
                     case ELEMENTS:
+                        if (numElements == -1){
+                            numElements = this.parseNumNodes(line);
+                            continue;
+                        }
+
+                        // Find element type
+                        if ((numInBlock == -1) || (numReadFromBlock == numInBlock)){
+                            elementType = this.elementType(line);
+                            numInBlock = this.numNodesInBlock(line);
+                            numReadFromBlock = 0;
+                            continue;
+                        }
+                        
+                        // We only read the triangles
+                        if (elementType == 2){
+                            mesh.addElement(this.triangleElementNodeIds(line));
+                        }
+                        numReadFromBlock += 1;
                         break;
                     case UNKNOWN:
                         break;

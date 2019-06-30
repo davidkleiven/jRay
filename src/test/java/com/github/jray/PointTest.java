@@ -28,4 +28,11 @@ public class PointTest{
         assertEquals(cross.getY(), 2.0, EPS);
         assertEquals(cross.getZ(), -5.0, EPS);
     }
+
+    @Test
+    public void testLength()
+    {
+        Point p1 = new Point(1.0, 2.0, -3.0);
+        assertEquals(p1.length(), Math.sqrt(14.0), EPS);
+    }
 }

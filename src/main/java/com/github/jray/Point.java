@@ -15,6 +15,13 @@ public class Point{
         crd[2] = z;
     };
 
+    public void set(double x, double y, double z)
+    {
+        crd[0] = x;
+        crd[1] = y;
+        crd[2] = z;
+    }
+
     public double getX() {return crd[0];};
     public double getY() {return crd[1];};
     public double getZ() {return crd[2];};
@@ -55,5 +62,14 @@ public class Point{
         crd[0] /= factor;
         crd[1] /= factor;
         crd[2] /= factor;
+    }
+
+    public double dot(Point other)
+    {
+        double value = 0.0;
+        for (int i=0;i<3;i++){
+            value += crd[i]*other.crd[i];
+        }
+        return value;
     }
 }

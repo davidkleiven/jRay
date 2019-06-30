@@ -44,4 +44,16 @@ public class Point{
         double z = this.getX()*other.getY() - this.getY()*other.getX();
         return new Point(x, y, z);
     }
+
+    public double length()
+    {
+        return Math.sqrt(crd[0]*crd[0] + crd[1]*crd[1] + crd[2]*crd[2]);
+    }
+
+    public void divide(double factor)
+    {
+        crd[0] /= factor;
+        crd[1] /= factor;
+        crd[2] /= factor;
+    }
 }

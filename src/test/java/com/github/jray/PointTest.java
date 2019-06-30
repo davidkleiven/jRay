@@ -35,4 +35,12 @@ public class PointTest{
         Point p1 = new Point(1.0, 2.0, -3.0);
         assertEquals(p1.length(), Math.sqrt(14.0), EPS);
     }
+
+    @Test
+    public void testDot()
+    {
+        Point p1 = new Point(1.0, 2.0, 3.0);
+        Point p2 = new Point(-1.0, 2.0, -2.0);
+        assertEquals(p1.dot(p2), -3.0, EPS);
+    }
 }

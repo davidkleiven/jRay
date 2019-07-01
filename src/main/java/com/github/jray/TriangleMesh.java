@@ -62,40 +62,28 @@ public class TriangleMesh
     {
         int[] ids = nodeIds.get(element);
 
-        // TODO: Precompute all normals
-        Point normal = this.normal(element);
-
-        // Ray is parametrised as x0 + t*d
-        double denum = normal.dot(ray.getDirection());
-        double eps = 1E-8;
-        if (denum < eps){
-            return false;
-        }
-
-        double t = (nodes.get(ids[0]).dot(normal) - normal.dot(ray.position))/denum;
-
-        if (t < 0.0){
-            return false;
-        }
-
-        double[] crd = new double[3];
-        crd[0] = ray.position.getX() + t*ray.getDirection().getX();
-        crd[1] = ray.position.getY() + t*ray.getDirection().getY();
-        crd[2] = ray.position.getZ() + t*ray.getDirection().getZ();
-        Point intersection = nodes.get(ids[0]).distance(new Point(crd[0], crd[1], crd[2]));
-
         // Find if the point is inside the triangle
         Point p1 = nodes.get(ids[0]).distance(nodes.get(ids[2]));
         Point p2 = nodes.get(ids[0]).distance(nodes.get(ids[1]));
+        Point rayOrigin = nodes.get(ids[0]).distance(ray.position);
 
-        double[] y = {intersection.getX(), intersection.getY(), intersection.getZ()};
+        double[] y = {rayOrigin.getX(), rayOrigin.getY(), rayOrigin.getZ()};
         double[][] X = {
-            {p1.getX(), p2.getX()},
-            {p1.getY(), p2.getY()},
-            {p1.getZ(), p2.getZ()}
+            {p1.getX(), p2.getX(), -ray.getDirection().getX()},
+            {p1.getY(), p2.getY(), -ray.getDirection().getY()},
+            {p1.getZ(), p2.getZ(), -ray.getDirection().getZ()}
         };
-        LeastSquares2Unknown solver = new LeastSquares2Unknown();
-        double[] coeff = solver.solve(X, y);
-        return (coeff[0] <= 1.0) && (coeff[1] <= 1.0) && (coeff[0] >= 0.0) && (coeff[1] >= 0.0);
+        Inverse3x3 solver = new Inverse3x3();
+        try{
+            solver.invert(X);
+        } catch (RuntimeException e){
+            return false;
+        }
+        double[] coeff = {0.0, 0.0, 0.0};
+        for (int i=0;i<3;i++)
+        for (int j=0;j<3;j++){
+            coeff[i] += X[i][j]*y[j];
+        }
+        return (coeff[0] + coeff[1] <= 1.0) && (coeff[0] >= 0.0) && (coeff[1] >= 0.0) && (coeff[2] >= 0.0);
     }
 }

@@ -8,4 +8,5 @@ public class ScatteringInfo
     public double currentRefractiveIndex;
     public int scatteringMediumId;
     public Vector intersectionPoint = new Vector(0.0, 0.0, 0.0);
+    public double time = 0.0;
 }

@@ -1,16 +1,28 @@
 package com.github.jray;
 
 import java.util.ArrayList;
+import java.util.Map;
+
+enum TerminationCause{
+    NO_ELEMENTS_IN_RAY_PATH,
+    MAX_BOUNCES_REACHED,
+    NO_BEAMS
+};
 
 public class BeamPropagator
 {
     private ArrayList<Ray> rays = new ArrayList<Ray>();
     private ArrayList<Boolean> propagated = new ArrayList<Boolean>();
+    public int maxBounces = 10;
 
     public void addRay(Ray ray)
     {
         rays.add(ray);
         propagated.add(false);
+    }
+
+    public Ray getRay(int id){
+        return rays.get(id);
     }
 
     private int grabAvailableRay()
@@ -25,18 +37,42 @@ public class BeamPropagator
         return -1;
     }
 
+    public int totalNumberOfRays()
+    {
+        return rays.size();
+    }
+
+    public int numPropagated()
+    {
+        int counter = 0;
+        for (Boolean value : propagated)
+        {
+            if (value)
+            {
+                counter += 1;
+            }
+        }
+        return counter;
+    }
+
     /**
      * Calculate ID of the element with shortest time to hit
      */
     private ScatteringInfo nextElementHit(Geometry geo, Ray ray)
     {
         ScatteringInfo nextHit = new ScatteringInfo();
-        nextHit.currentRefractiveIndex = geo.mediums.get(ray.mediumId).getRefractiveIndex();
+        nextHit.currentRefractiveIndex = geo.getMedium(ray.mediumId).getRefractiveIndex();
         nextHit.scatteringMediumId = 0;
+        nextHit.element = -1;
 
         double timeToHit = 0.0;
 
-        for (PhysicalMedium medium : geo.mediums){
+        for (Map.Entry<Integer,PhysicalMedium> entry : geo.allMediums().entrySet()){
+            PhysicalMedium medium = entry.getValue();
+
+            if (medium.mesh == null){
+                continue;
+            }
             for (int i=0;i<medium.mesh.numElements();i++){
                 if (medium.mesh.rayIntersectsElement(ray, i))
                 {
@@ -46,6 +82,9 @@ public class BeamPropagator
                         nextHit.element = i;
                         nextHit.mesh = medium.mesh;
                         timeToHit = time;
+                        Vector dist = ray.getDirection().mult(timeToHit);
+                        nextHit.intersectionPoint.iadd(ray.position);
+                        nextHit.intersectionPoint.iadd(dist);
 
                         if (medium.getID() == ray.mediumId){
                             // Ray it another wall of the object
@@ -85,10 +124,10 @@ public class BeamPropagator
 
         Vector amp = ray.getAmplitude();
         double normalComp = normal.dot(amp);
-        Vector normalAmp = amp.mult(normalComp);
+        Vector normalAmp = normal.mult(normalComp);
         Vector parallelAmp = amp.subtract(normalAmp);
         double normDirAmp = normal.dot(ray.getDirection());
-        Vector normalDir = ray.getDirection().mult(normDirAmp);
+        Vector normalDir = normal.mult(normDirAmp);
         normalDir.imult(2.0);
 
 
@@ -97,8 +136,16 @@ public class BeamPropagator
         Vector parAmpRef = parallelAmp.mult(rp);
         Vector refAmp = normalAmpRef.add(parAmpRef);
         Vector refDir = ray.getDirection().subtract(normalDir);
+
         ray.setDirection(refDir.getX(), refDir.getY(), refDir.getZ());
         ray.setAmplitude(refAmp.getX(), refAmp.getY(), refAmp.getZ());
+        ray.position.set(scatInfo.intersectionPoint);
+
+        // Propagate a small distance along the new direction
+        double eps = 1E-6;
+        Vector smallDistance = ray.getDirection().mult(eps);
+        ray.position.iadd(smallDistance);
+
 
         // Transmitted ray
         Vector normalAmpTrans = normalAmp.mult(ts);
@@ -133,25 +180,36 @@ public class BeamPropagator
         }
         transDir.iadd(rPar);
         transRay.setDirection(transDir.getX(), transDir.getY(), transDir.getZ());
+        transRay.position.set(scatInfo.intersectionPoint);
+        smallDistance = transRay.getDirection().mult(eps);
+        transDir.iadd(smallDistance);
+        transRay.mediumId = scatInfo.scatteringMediumId;
 
         // Add the ray to the pool of rays
         addRay(transRay);
     }
 
-    public void propagateNextActive(Geometry geo)
+    public TerminationCause propagateNextActive(Geometry geo)
     {
         int rayId = this.grabAvailableRay();
 
         if (rayId == -1){
-            return;
+            return TerminationCause.NO_BEAMS;
         }
 
         Ray ray = rays.get(rayId);
 
         ScatteringInfo nextElement = nextElementHit(geo, ray);
+        int numBounces = 0;
         while (nextElement.element != -1)
         {
             this.scatter(nextElement, ray);
+            if (numBounces > this.maxBounces){
+                return TerminationCause.MAX_BOUNCES_REACHED;
+            }
+            nextElement = nextElementHit(geo, ray);
+            numBounces += 1;
         }
+        return TerminationCause.NO_ELEMENTS_IN_RAY_PATH;
     }
 }

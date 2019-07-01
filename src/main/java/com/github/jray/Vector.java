@@ -22,6 +22,13 @@ public class Vector{
         crd[2] = z;
     }
 
+    public void set(Vector other)
+    {
+        crd[0] = other.crd[0];
+        crd[1] = other.crd[1];
+        crd[2] = other.crd[2];
+    }
+
     public double getX() {return crd[0];};
     public double getY() {return crd[1];};
     public double getZ() {return crd[2];};
@@ -115,5 +122,9 @@ public class Vector{
             value += crd[i]*other.crd[i];
         }
         return value;
+    }
+
+    public String displayProfile() {
+        return String.format("(%e, %e, %e)", crd[0], crd[1], crd[2]);
     }
 }

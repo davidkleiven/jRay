@@ -5,7 +5,7 @@ public class Ray
     private Vector direction = new Vector(1.0, 0.0, 0.0);
     private Vector amplitude = new Vector(0.0, 1.0, 0.0);
     public Vector position = new Vector(0.0, 0.0, 0.0);
-    public int mediumId = 0;
+    public int mediumId = 0; // -1 --> Vacuum
 
     /**
      * Return the total amplitude

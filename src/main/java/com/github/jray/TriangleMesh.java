@@ -52,14 +52,7 @@ public class TriangleMesh
         return p3;
     }
 
-    /**
-     * Check if a ray intersects the element
-     * @param ray
-     * @param element
-     * @return
-     */
-    public boolean rayIntersectsElement(Ray ray, int element)
-    {
+    private double[] barycentricTimeToHit(Ray ray, int element){
         int[] ids = nodeIds.get(element);
 
         // Find if the point is inside the triangle
@@ -74,16 +67,36 @@ public class TriangleMesh
             {p1.getZ(), p2.getZ(), -ray.getDirection().getZ()}
         };
         Inverse3x3 solver = new Inverse3x3();
+        double[] coeff = {0.0, 0.0, 0.0};
         try{
             solver.invert(X);
         } catch (RuntimeException e){
-            return false;
+            double[] negImpactTime = {0.0, 0.0, -1.0};
+            return negImpactTime;
         }
-        double[] coeff = {0.0, 0.0, 0.0};
+        
         for (int i=0;i<3;i++)
         for (int j=0;j<3;j++){
             coeff[i] += X[i][j]*y[j];
         }
+        return coeff;
+    }
+
+    /**
+     * Check if a ray intersects the element
+     * @param ray
+     * @param element
+     * @return
+     */
+    public boolean rayIntersectsElement(Ray ray, int element)
+    {
+        double[] coeff = this.barycentricTimeToHit(ray, element);
         return (coeff[0] + coeff[1] <= 1.0) && (coeff[0] >= 0.0) && (coeff[1] >= 0.0) && (coeff[2] >= 0.0);
+    }
+
+    public double timeUntilHit(Ray ray, int element)
+    {
+        double[] coeff = this.barycentricTimeToHit(ray, element);
+        return coeff[2];
     }
 }

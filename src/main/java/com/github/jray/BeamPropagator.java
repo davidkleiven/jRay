@@ -66,7 +66,7 @@ public class BeamPropagator
     {
         ScatteringInfo nextHit = new ScatteringInfo();
         nextHit.currentRefractiveIndex = geo.getMedium(ray.mediumId).getRefractiveIndex();
-        nextHit.scatteringMediumId = 0;
+        nextHit.scatteringMedium = geo.getMedium(ray.mediumId);
         nextHit.element = -1;
 
         double timeToHit = 0.0;
@@ -77,6 +77,7 @@ public class BeamPropagator
             if (medium.mesh == null){
                 continue;
             }
+
             for (int i=0;i<medium.mesh.numElements();i++){
                 if (medium.mesh.rayIntersectsElement(ray, i))
                 {
@@ -95,14 +96,13 @@ public class BeamPropagator
                             // Ray it another wall of the object
                             // we assume that we enter vacuum
                             nextHit.newRefractiveIndex = 1.0;
-                            nextHit.scatteringMediumId = 0;
+                            nextHit.scatteringMedium = geo.getMedium(0);
                         }
                         else{
                             // We hit another object
                             nextHit.newRefractiveIndex = medium.getRefractiveIndex();
-                            nextHit.scatteringMediumId = medium.getID();
+                            nextHit.scatteringMedium = medium;
                         }
-
                     }
                 }
             }
@@ -118,6 +118,9 @@ public class BeamPropagator
         Vector incDirection = new Vector(0.0, 0.0, 0.0);
         incDirection.set(ray.getDirection());
         ray.opticalPathLength += scatInfo.currentRefractiveIndex*scatInfo.time;
+
+        // Update monitor if present
+        scatInfo.scatteringMedium.updateMonitor(scatInfo.element, ray);
 
         double angle = Math.acos(normal.dot(incDirection));
 
@@ -206,7 +209,7 @@ public class BeamPropagator
         transRay.position.set(scatInfo.intersectionPoint);
         smallDistance = transRay.getDirection().mult(eps);
         transRay.position.iadd(smallDistance);
-        transRay.mediumId = scatInfo.scatteringMediumId;
+        transRay.mediumId = scatInfo.scatteringMedium.getID();
 
         // Add the ray to the pool of rays
         addRay(transRay);

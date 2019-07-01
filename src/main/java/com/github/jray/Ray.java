@@ -6,6 +6,7 @@ public class Ray
     private Vector amplitude = new Vector(0.0, 1.0, 0.0);
     public Vector position = new Vector(0.0, 0.0, 0.0);
     public int mediumId = 0; // -1 --> Vacuum
+    public double opticalPathLength = 0.0;
 
     /**
      * Return the total amplitude

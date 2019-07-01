@@ -87,6 +87,7 @@ public class BeamPropagator
                         Vector dist = ray.getDirection().mult(timeToHit);
                         nextHit.intersectionPoint.iadd(ray.position);
                         nextHit.intersectionPoint.iadd(dist);
+                        nextHit.time = time;
 
                         if (medium.getID() == ray.mediumId){
                             // Ray it another wall of the object
@@ -114,6 +115,7 @@ public class BeamPropagator
         // Make a deep copy of the incident direction
         Vector incDirection = new Vector(0.0, 0.0, 0.0);
         incDirection.set(ray.getDirection());
+        ray.opticalPathLength += scatInfo.currentRefractiveIndex*scatInfo.time;
 
         double angle = Math.acos(normal.dot(incDirection));
 
@@ -168,6 +170,7 @@ public class BeamPropagator
         Vector transAmp = normalAmpTrans.add(parAmpTrans);
         Ray transRay = new Ray();
         transRay.setAmplitude(transAmp.getX(), transAmp.getY(), transAmp.getZ());
+        transRay.opticalPathLength = ray.opticalPathLength;
         double sinThetaT = fresnel.sinTransmissionAngle(angle);
 
         if (Math.abs(sinThetaT) > 1.0){

@@ -149,7 +149,6 @@ public class BeamPropagator
         Vector normalDir = normal.mult(normDirAmp);
         Vector twoNormalDir = normalDir.mult(2.0);
 
-
         // Reflected ray
         Vector normalAmpRef = normalAmp.mult(rs);
         Vector parAmpRef = parallelAmp.mult(rp);

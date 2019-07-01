@@ -6,15 +6,15 @@ import java.util.ArrayList;
 
 public class TriangleMesh
 {
-    private ArrayList<Point> nodes = new ArrayList<Point>();
+    private ArrayList<Vector> nodes = new ArrayList<Vector>();
     private ArrayList<int[]> nodeIds = new ArrayList<int[]>();
 
     /**
-     * Add a new point to the point array
+     * Add a new Vector to the Vector array
      * @param uid ID in the of the node
-     * @param p Point
+     * @param p Vector
      */
-    public void addNode(Point p){
+    public void addNode(Vector p){
         nodes.add(p);
     }
 
@@ -42,23 +42,23 @@ public class TriangleMesh
      * @param element
      * @return
      */
-    public Point normal(int element)
+    public Vector normal(int element)
     {
         int[] ids = nodeIds.get(element);
-        Point p1 = nodes.get(ids[1]).distance(nodes.get(ids[0]));
-        Point p2 = nodes.get(ids[2]).distance(nodes.get(ids[0]));
-        Point p3 = p1.cross(p2);
-        p3.divide(p3.length());
+        Vector p1 = nodes.get(ids[1]).distance(nodes.get(ids[0]));
+        Vector p2 = nodes.get(ids[2]).distance(nodes.get(ids[0]));
+        Vector p3 = p1.cross(p2);
+        p3.idivide(p3.length());
         return p3;
     }
 
     private double[] barycentricTimeToHit(Ray ray, int element){
         int[] ids = nodeIds.get(element);
 
-        // Find if the point is inside the triangle
-        Point p1 = nodes.get(ids[0]).distance(nodes.get(ids[2]));
-        Point p2 = nodes.get(ids[0]).distance(nodes.get(ids[1]));
-        Point rayOrigin = nodes.get(ids[0]).distance(ray.position);
+        // Find if the Vector is inside the triangle
+        Vector p1 = nodes.get(ids[0]).distance(nodes.get(ids[2]));
+        Vector p2 = nodes.get(ids[0]).distance(nodes.get(ids[1]));
+        Vector rayOrigin = nodes.get(ids[0]).distance(ray.position);
 
         double[] y = {rayOrigin.getX(), rayOrigin.getY(), rayOrigin.getZ()};
         double[][] X = {

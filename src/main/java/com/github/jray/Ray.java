@@ -2,9 +2,10 @@ package com.github.jray;
 
 public class Ray
 {
-    private Point direction = new Point(1.0, 0.0, 0.0);
-    private Point amplitude = new Point(0.0, 1.0, 0.0);
-    public Point position = new Point(0.0, 0.0, 0.0);
+    private Vector direction = new Vector(1.0, 0.0, 0.0);
+    private Vector amplitude = new Vector(0.0, 1.0, 0.0);
+    public Vector position = new Vector(0.0, 0.0, 0.0);
+    public int mediumId = 0;
 
     /**
      * Return the total amplitude
@@ -15,7 +16,7 @@ public class Ray
         return amplitude.length();
     }
 
-    public Point getDirection()
+    public Vector getDirection()
     {
         return direction;
     }
@@ -23,5 +24,15 @@ public class Ray
     public void setDirection(double x, double y, double z)
     {
         direction.set(x, y, z);
+    }
+
+    public Vector getAmplitude()
+    {
+        return amplitude;
+    }
+
+    public void setAmplitude(double Ax, double Ay, double Az)
+    {
+        amplitude.set(Ax, Ay, Az);
     }
 }

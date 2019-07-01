@@ -28,7 +28,7 @@ public class GMSHReader
     /**
      * Extract the number in block
      * @param line
-     * @return Number of points in the block
+     * @return Number of Vectors in the block
      */
     protected int numNodesInBlock(String line)
     {
@@ -38,17 +38,17 @@ public class GMSHReader
     }
 
     /**
-     * Extract a point from a line in the file
+     * Extract a Vector from a line in the file
      * @param line
      * @return
      */
-    protected Point getPoint(String line)
+    protected Vector getVector(String line)
     {
         String[] partitioned = line.split(" ");
         double x = Double.parseDouble(partitioned[1]);
         double y = Double.parseDouble(partitioned[2]);
         double z = Double.parseDouble(partitioned[3]);
-        return new Point(x, y, z);
+        return new Vector(x, y, z);
     }
 
     /**
@@ -130,7 +130,7 @@ public class GMSHReader
                             numReadFromBlock = 0;
                             continue;
                         }
-                        mesh.addNode(this.getPoint(line));
+                        mesh.addNode(this.getVector(line));
                         numReadFromBlock += 1;
                         break;
                     case ELEMENTS:

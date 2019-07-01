@@ -1,6 +1,6 @@
 package com.github.jray;
 
-public class Point{
+public class Vector{
     private double[] crd = new double[3];
 
     /**
@@ -8,7 +8,7 @@ public class Point{
      * @param y y-coordinate
      * @param z z-coordinate
      */
-    public Point(double x, double y, double z)
+    public Vector(double x, double y, double z)
     {
         crd[0] = x;
         crd[1] = y;
@@ -29,27 +29,43 @@ public class Point{
 
     /**
      * 
-     * @param other Point to which the distance should be computed
-     * @return Point representing the distance to the other point
+     * @param other Vector to which the distance should be computed
+     * @return Vector representing the distance to the other Vector
      */
-    public Point distance(Point other)
+    public Vector distance(Vector other)
     {
         double x = other.getX() - this.getX();
         double y = other.getY() - this.getY();
         double z = other.getZ() - this.getZ();
-        return new Point(x, y, z);
+        return new Vector(x, y, z);
+    }
+
+    public Vector subtract(Vector other)
+    {
+        double x = this.getX() - other.getX();
+        double y = this.getY() - other.getY();
+        double z = this.getZ() - other.getZ();
+        return new Vector(x, y, z);
+    }
+
+    public Vector add(Vector other)
+    {
+        double x = this.getX() + other.getX();
+        double y = this.getY() + other.getY();
+        double z = this.getZ() + other.getZ();
+        return new Vector(x, y, z);
     }
 
     /**
-     * @param other Point to make the cross product with
-     * @return Point representing the cross product
+     * @param other Vector to make the cross product with
+     * @return Vector representing the cross product
      */
-    public Point cross(Point other)
+    public Vector cross(Vector other)
     {
         double x = this.getY()*other.getZ() - this.getZ()*other.getY();
         double y = -(this.getX()*other.getZ() - this.getZ()*other.getX());
         double z = this.getX()*other.getY() - this.getY()*other.getX();
-        return new Point(x, y, z);
+        return new Vector(x, y, z);
     }
 
     public double length()
@@ -57,14 +73,22 @@ public class Point{
         return Math.sqrt(crd[0]*crd[0] + crd[1]*crd[1] + crd[2]*crd[2]);
     }
 
-    public void divide(double factor)
+    public void idivide(double factor)
     {
         crd[0] /= factor;
         crd[1] /= factor;
         crd[2] /= factor;
     }
 
-    public double dot(Point other)
+    public Vector divide(double factor)
+    {
+        double x = crd[0]/factor;
+        double y = crd[1]/factor;
+        double z = crd[2]/factor;
+        return new Vector(x, y, z);
+    }
+
+    public double dot(Vector other)
     {
         double value = 0.0;
         for (int i=0;i<3;i++){

@@ -10,7 +10,7 @@ public class FresnelAmplitudes{
         refractiveTo = nTo;
     }
 
-    private double sinTransmissionAngle(double inc_angle)
+    public double sinTransmissionAngle(double inc_angle)
     {
         double sinTheta = this.refractiveFrom*Math.sin(inc_angle)/this.refractiveTo;
         return sinTheta;

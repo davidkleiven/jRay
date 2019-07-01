@@ -56,6 +56,13 @@ public class Vector{
         return new Vector(x, y, z);
     }
 
+    public void iadd(Vector other)
+    {
+        crd[0] += other.crd[0];
+        crd[1] += other.crd[1];
+        crd[2] += other.crd[2];
+    }
+
     /**
      * @param other Vector to make the cross product with
      * @return Vector representing the cross product
@@ -86,6 +93,19 @@ public class Vector{
         double y = crd[1]/factor;
         double z = crd[2]/factor;
         return new Vector(x, y, z);
+    }
+
+    public void imult(double factor){
+        crd[0] *= factor;
+        crd[1] *= factor;
+        crd[2] *= factor;
+    }
+
+    public Vector mult(double factor)
+    {
+        Vector vec = new Vector(crd[0], crd[1], crd[2]);
+        vec.imult(factor);
+        return vec;
     }
 
     public double dot(Vector other)

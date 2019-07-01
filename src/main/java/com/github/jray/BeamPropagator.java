@@ -86,7 +86,57 @@ public class BeamPropagator
 
         Vector amp = ray.getAmplitude();
         double normalComp = normal.dot(amp);
-        Vector normalAmp = 
+        Vector normalAmp = amp.mult(normalComp);
+        Vector parallelAmp = amp.subtract(normalAmp);
+        double normDirAmp = normal.dot(ray.getDirection());
+        Vector normalDir = ray.getDirection().mult(normDirAmp);
+        normalDir.imult(2.0);
+
+
+        // Reflected ray
+        Vector normalAmpRef = normalAmp.mult(rs);
+        Vector parAmpRef = parallelAmp.mult(rp);
+        Vector refAmp = normalAmpRef.add(parAmpRef);
+        Vector refDir = ray.getDirection().subtract(normalDir);
+        ray.setDirection(refDir.getX(), refDir.getY(), refDir.getZ());
+        ray.setAmplitude(refAmp.getX(), refAmp.getY(), refAmp.getZ());
+
+        // Transmitted ray
+        Vector normalAmpTrans = normalAmp.mult(ts);
+        Vector parAmpTrans = parallelAmp.mult(tp);
+        Vector transAmp = normalAmpTrans.add(parAmpTrans);
+        Ray transRay = new Ray();
+        transRay.setAmplitude(transAmp.getX(), transAmp.getY(), transAmp.getZ());
+        double sinThetaT = fresnel.sinTransmissionAngle(angle);
+
+        if (Math.abs(sinThetaT) > 1.0){
+            return;
+        }
+
+        double thetaT = Math.asin(sinThetaT);
+        double costThetaT = Math.cos(thetaT);
+        Vector transDir = normal.mult(costThetaT);
+        Vector rPar = ray.getDirection().subtract(normalDir);
+        rPar.idivide(rPar.length());
+        rPar.imult(sinThetaT);
+        
+        // Make sure sign of inner product is preserved
+        boolean origPositive = (normDirAmp > 0.0);
+        boolean newPositive = (transDir.dot(normal) > 0.0);
+
+        if (origPositive != newPositive){
+            transDir.imult(-1.0);
+        }
+
+        // Determine the sign of the parallel component
+        if (ray.getDirection().dot(rPar) < 0.0){
+            rPar.imult(-1.0);
+        }
+        transDir.iadd(rPar);
+        transRay.setDirection(transDir.getX(), transDir.getY(), transDir.getZ());
+
+        // Add the ray to the pool of rays
+        addRay(transRay);
     }
 
     public void propagateNextActive(Geometry geo)

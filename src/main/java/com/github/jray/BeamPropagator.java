@@ -8,7 +8,8 @@ import java.util.ArrayList;
 enum TerminationCause{
     NO_ELEMENTS_IN_RAY_PATH,
     MAX_BOUNCES_REACHED,
-    NO_BEAMS
+    NO_BEAMS,
+    MIN_AMPLITUDE_REACED,
 };
 
 public class BeamPropagator
@@ -16,6 +17,7 @@ public class BeamPropagator
     private LinkedList<Ray> rays = new LinkedList<Ray>();
     private LinkedList<Boolean> propagated = new LinkedList<Boolean>();
     public int maxBounces = 10;
+    public double minAmplitude = 1E-3;
 
     public void addRay(Ray ray)
     {
@@ -226,12 +228,16 @@ public class BeamPropagator
         int numBounces = 0;
         while (nextElement.element != -1)
         {
+            if (ray.amplitude() < minAmplitude){
+                return TerminationCause.MIN_AMPLITUDE_REACED;
+            }
+
             this.scatter(nextElement, ray);
-            if (numBounces > this.maxBounces){
+            numBounces += 1;
+            if (numBounces >= this.maxBounces){
                 return TerminationCause.MAX_BOUNCES_REACHED;
             }
             nextElement = nextElementHit(geo, ray);
-            numBounces += 1;
         }
         return TerminationCause.NO_ELEMENTS_IN_RAY_PATH;
     }

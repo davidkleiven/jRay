@@ -117,4 +117,38 @@ public class BeamPropagatorTest
         prop.clearFinishedRays();
         assertEquals(1, prop.totalNumberOfRays());
     }
+
+    @Test
+    public void testOpticalPathLength()
+    {
+        GMSHReader reader = new GMSHReader();
+        TriangleMesh mesh = reader.readGMSH("res/box.msh");
+
+        PhysicalMedium glassBox = new PhysicalMedium(1.5);
+        glassBox.mesh = mesh;
+
+        Geometry geo = new Geometry();
+        geo.addMedium(glassBox);
+
+        Ray ray = new Ray();
+        ray.position.set(0.5, 0.5, -10.0);
+        ray.setDirection(0.0, 0.0, 1.0);
+        ray.setAmplitude(1.0, 0.0, 0.0);
+
+        BeamPropagator prop = new BeamPropagator();
+        prop.addRay(ray);
+
+        TerminationCause cause = prop.propagateNextActive(geo);
+        assertEquals(TerminationCause.NO_ELEMENTS_IN_RAY_PATH, cause);
+        assertEquals(ray.opticalPathLength, 10.0, 1E-6);
+
+        // Propagate the next. This is the transmitted beam and that should
+        // propagate a distance inside the box.
+        prop.maxBounces = 10;
+        prop.minAmplitude = 1E-10; // Just make sure that we don't terminate because of a low amplitude
+        cause = prop.propagateNextActive(geo);
+        Ray transmitted = prop.getRay(1);
+        assertEquals(TerminationCause.MAX_BOUNCES_REACHED, cause);
+        assertEquals(10.0 + 10*1.5, transmitted.opticalPathLength, 1E-3);
+    }
 }

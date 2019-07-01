@@ -1,5 +1,7 @@
 package com.github.jray;
 
+import javax.management.RuntimeErrorException;
+
 public class Inverse3x3{
     /**
      * Calculate the minor
@@ -32,7 +34,13 @@ public class Inverse3x3{
      * Invert a 3x3 matrix
      * @param X 3x3 matrix
      */
-    public void invert(double[][] X){
+    public void invert(double[][] X) throws RuntimeException
+    {
+        double det = this.determinant(X);
+
+        if (Math.abs(det) < 1E-8){
+            throw new RuntimeException("Matrix is not invertible!");
+        }
         double[][] cofactors = new double[3][3];
 
         for (int i=0;i<3;i++)
@@ -40,7 +48,6 @@ public class Inverse3x3{
             cofactors[i][j] = this.minor(X, i, j);
         }
 
-        double det = this.determinant(X);
         for (int i=0;i<3;i++)
         for (int j=0;j<3;j++){
             X[i][j] = cofactors[j][i]/det;

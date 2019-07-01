@@ -29,4 +29,23 @@ public class Inverse3x3Test
             assertEquals(expect[i][j], X[i][j], 1E-6);
         }
     }
+
+    @Test
+    public void testNotInvertible()
+    {
+        double[][] X = {
+            {1.0, 2.0, 3.0},
+            {2.0, 3.0, -1.0},
+            {0.0, 0.0, 0.0}
+        };
+
+        Inverse3x3 solver = new Inverse3x3();
+        String message = null;
+        try{
+            solver.invert(X);
+        } catch (RuntimeException e){
+            message = e.getMessage();
+        }
+        assertEquals("Matrix is not invertible!", message);
+    }
 }

@@ -112,5 +112,9 @@ public class BeamPropagatorTest
         assertEquals(0.0, amp.getZ(), 0.0);
         double ts = fresnel.ts(angle);
         assertEquals(ts, amp.getY(), 1E-6);
+
+        // Try to remove the finished ones
+        prop.clearFinishedRays();
+        assertEquals(1, prop.totalNumberOfRays());
     }
 }

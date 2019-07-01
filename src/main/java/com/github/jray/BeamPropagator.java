@@ -1,7 +1,9 @@
 package com.github.jray;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.ArrayList;
 
 enum TerminationCause{
     NO_ELEMENTS_IN_RAY_PATH,
@@ -229,5 +231,27 @@ public class BeamPropagator
             numBounces += 1;
         }
         return TerminationCause.NO_ELEMENTS_IN_RAY_PATH;
+    }
+
+    /**
+     * To avoid consuming too much memory clear rays that are finished
+     */
+    public void clearFinishedRays()
+    {
+        ArrayList<Ray> removeRays = new ArrayList<Ray>();
+        ArrayList<Boolean> removePropagated = new ArrayList<Boolean>();
+
+        Iterator<Ray> rayIter = rays.iterator();
+        for (Iterator<Boolean> i=propagated.iterator(); i.hasNext();){
+            Boolean finished = i.next();
+            Ray ray = rayIter.next();
+
+            if (finished){
+                removeRays.add(ray);
+                removePropagated.add(finished);
+            }
+        }
+        rays.removeAll(removeRays);
+        propagated.removeAll(removePropagated);
     }
 }

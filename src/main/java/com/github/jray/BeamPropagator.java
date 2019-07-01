@@ -6,7 +6,6 @@ public class BeamPropagator
 {
     private ArrayList<Ray> rays = new ArrayList<Ray>();
     private ArrayList<Boolean> propagated = new ArrayList<Boolean>();
-    private int activeRayId = 0;
 
     public void addRay(Ray ray)
     {

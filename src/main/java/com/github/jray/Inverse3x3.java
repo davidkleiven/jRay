@@ -1,7 +1,5 @@
 package com.github.jray;
 
-import javax.management.RuntimeErrorException;
-
 public class Inverse3x3{
     /**
      * Calculate the minor

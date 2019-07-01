@@ -164,7 +164,6 @@ public class BeamPropagator
         Vector smallDistance = ray.getDirection().mult(eps);
         ray.position.iadd(smallDistance);
 
-
         // Transmitted ray
         Vector normalAmpTrans = normalAmp.mult(ts);
         Vector parAmpTrans = parallelAmp.mult(tp);

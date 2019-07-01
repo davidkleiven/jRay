@@ -55,6 +55,13 @@ public class Vector{
         return new Vector(x, y, z);
     }
 
+    public void isubtract(Vector other)
+    {
+        crd[0] -= other.crd[0];
+        crd[1] -= other.crd[1];
+        crd[2] -= other.crd[2];
+    }
+
     public Vector add(Vector other)
     {
         double x = this.getX() + other.getX();
@@ -126,5 +133,10 @@ public class Vector{
 
     public String displayProfile() {
         return String.format("(%e, %e, %e)", crd[0], crd[1], crd[2]);
+    }
+
+    public boolean isParallel(Vector other){
+        double dot = Math.abs(this.dot(other));
+        return Math.abs(dot - 1.0) < 1E-6;
     }
 }

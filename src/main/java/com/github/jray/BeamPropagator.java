@@ -1,6 +1,6 @@
 package com.github.jray;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 
 enum TerminationCause{
@@ -11,8 +11,8 @@ enum TerminationCause{
 
 public class BeamPropagator
 {
-    private ArrayList<Ray> rays = new ArrayList<Ray>();
-    private ArrayList<Boolean> propagated = new ArrayList<Boolean>();
+    private LinkedList<Ray> rays = new LinkedList<Ray>();
+    private LinkedList<Boolean> propagated = new LinkedList<Boolean>();
     public int maxBounces = 10;
 
     public void addRay(Ray ray)
@@ -109,7 +109,11 @@ public class BeamPropagator
     {
         Vector normal = scatInfo.mesh.normal(scatInfo.element);
 
-        double angle = Math.acos(normal.dot(ray.getDirection()));
+        // Make a deep copy of the incident direction
+        Vector incDirection = new Vector(0.0, 0.0, 0.0);
+        incDirection.set(ray.getDirection());
+
+        double angle = Math.acos(normal.dot(incDirection));
 
         if (angle > Math.PI/2.0){
             angle = Math.PI - angle;
@@ -123,19 +127,28 @@ public class BeamPropagator
         double tp = fresnel.tp(angle);
 
         Vector amp = ray.getAmplitude();
-        double normalComp = normal.dot(amp);
-        Vector normalAmp = normal.mult(normalComp);
+        Vector incPlaneNormal = incDirection.cross(normal);
+        
+        // At normal incidence the cross product is zero
+        // We just use the amplitude vector as normal
+        if (incDirection.isParallel(normal)){
+            incPlaneNormal.set(ray.getAmplitude());
+        }
+
+        incPlaneNormal.idivide(incPlaneNormal.length());
+        double normalComp = incPlaneNormal.dot(amp);
+        Vector normalAmp = incPlaneNormal.mult(normalComp);
         Vector parallelAmp = amp.subtract(normalAmp);
-        double normDirAmp = normal.dot(ray.getDirection());
+        double normDirAmp = normal.dot(incDirection);
         Vector normalDir = normal.mult(normDirAmp);
-        normalDir.imult(2.0);
+        Vector twoNormalDir = normalDir.mult(2.0);
 
 
         // Reflected ray
         Vector normalAmpRef = normalAmp.mult(rs);
         Vector parAmpRef = parallelAmp.mult(rp);
         Vector refAmp = normalAmpRef.add(parAmpRef);
-        Vector refDir = ray.getDirection().subtract(normalDir);
+        Vector refDir = incDirection.subtract(twoNormalDir);
 
         ray.setDirection(refDir.getX(), refDir.getY(), refDir.getZ());
         ray.setAmplitude(refAmp.getX(), refAmp.getY(), refAmp.getZ());
@@ -162,8 +175,13 @@ public class BeamPropagator
         double thetaT = Math.asin(sinThetaT);
         double costThetaT = Math.cos(thetaT);
         Vector transDir = normal.mult(costThetaT);
-        Vector rPar = ray.getDirection().subtract(normalDir);
-        rPar.idivide(rPar.length());
+        Vector rPar = incDirection.subtract(normalDir);
+
+        if (!incDirection.isParallel(normal)){
+            rPar.idivide(rPar.length());
+        }
+
+        System.out.println(rPar.displayProfile());
         rPar.imult(sinThetaT);
         
         // Make sure sign of inner product is preserved
@@ -175,14 +193,14 @@ public class BeamPropagator
         }
 
         // Determine the sign of the parallel component
-        if (ray.getDirection().dot(rPar) < 0.0){
+        if (incDirection.dot(rPar) < 0.0){
             rPar.imult(-1.0);
         }
         transDir.iadd(rPar);
         transRay.setDirection(transDir.getX(), transDir.getY(), transDir.getZ());
         transRay.position.set(scatInfo.intersectionPoint);
         smallDistance = transRay.getDirection().mult(eps);
-        transDir.iadd(smallDistance);
+        transRay.position.iadd(smallDistance);
         transRay.mediumId = scatInfo.scatteringMediumId;
 
         // Add the ray to the pool of rays

@@ -2,6 +2,8 @@ package com.github.jray;
 
 import static org.junit.Assert.assertEquals;
 
+import javax.naming.directory.InvalidAttributeValueException;
+
 import org.junit.Test;
 
 
@@ -65,6 +67,11 @@ public class BeamPropagatorTest
 
         PhysicalMedium glassBox = new PhysicalMedium(1.5);
         glassBox.mesh = mesh;
+
+        try{
+            glassBox.useMonitor();
+        } catch (InvalidAttributeValueException e){}
+        
 
         Geometry geo = new Geometry();
         geo.addMedium(glassBox);

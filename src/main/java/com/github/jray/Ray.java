@@ -4,6 +4,7 @@ public class Ray
 {
     private Vector direction = new Vector(1.0, 0.0, 0.0);
     private Vector amplitude = new Vector(0.0, 1.0, 0.0);
+    private double wavenumber = 1.0;
     public Vector position = new Vector(0.0, 0.0, 0.0);
     public int mediumId = 0; // -1 --> Vacuum
     public double opticalPathLength = 0.0;
@@ -35,5 +36,14 @@ public class Ray
     public void setAmplitude(double Ax, double Ay, double Az)
     {
         amplitude.set(Ax, Ay, Az);
+    }
+
+    public void setWavelength(double L)
+    {
+        wavenumber = 2.0*Math.PI/L;
+    }
+
+    public double getWavenumber(){
+        return wavenumber;
     }
 }

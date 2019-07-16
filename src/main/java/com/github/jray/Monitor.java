@@ -56,6 +56,28 @@ public class Monitor
         }
     }
 
+    /**
+     * @param fname Filename
+     * @param mesh Triangle mesh corresponding to the monitor
+     */
+    public void save(String fname, TriangleMesh mesh)
+    {
+        try{
+            FileWriter writer = new FileWriter(fname);
+            writer.write("# x,y,z,RealX,RealY,RealZ,ImagX,ImagY,ImagZ\n");
+            for (int i=0;i<amplitudeReal.size();i++)
+            {
+                Vector re = amplitudeReal.get(i);
+                Vector im = amplitudeImag.get(i);
+                Vector com = mesh.centroid(i);
+                writer.write(String.format("%f,%f,%f,%f,%f,%f,%f,%f,%f\n", com.getX(), com.getY(), com.getZ(), re.getX(), re.getY(),re.getZ(), im.getX(), im.getY(), im.getZ()));
+            }
+            writer.close();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
     public void load(String fname)
     {
         amplitudeReal.clear();
@@ -80,7 +102,6 @@ public class Monitor
                 amplitudeReal.add(new Vector(reX, reY, reZ));
                 amplitudeImag.add(new Vector(imX, imY, imZ));
             }
-
         } catch(IOException e){
             e.printStackTrace();
         }

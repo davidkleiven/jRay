@@ -52,6 +52,18 @@ public class TriangleMesh
         return p3;
     }
 
+    public Vector centroid(int element)
+    {
+        int[] ids = nodeIds.get(element);
+        Vector p1 = nodes.get(ids[0]);
+        Vector p2 = nodes.get(ids[1]);
+        Vector p3 = nodes.get(ids[2]);
+        p1.iadd(p2);
+        p1.iadd(p3);
+        p1.idivide(3.0);
+        return p1;
+    }
+
     private double[] barycentricTimeToHit(Ray ray, int element){
         int[] ids = nodeIds.get(element);
 

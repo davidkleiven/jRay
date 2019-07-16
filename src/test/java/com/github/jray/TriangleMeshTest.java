@@ -6,6 +6,7 @@ import org.junit.Test;
 
 public class TriangleMeshTest
 {
+    private static final double EPS = 1E-6;
     @Test
     public void testNumIntersectCenter()
     {
@@ -39,5 +40,21 @@ public class TriangleMeshTest
             }
         }
         assertEquals(0, num_intersections);
+    }
+
+    @Test
+    public void testCentroid()
+    {
+        TriangleMesh mesh = new TriangleMesh();
+        mesh.addNode(new Vector(0.0, 0.0, 0.0));
+        mesh.addNode(new Vector(-1.0, 0.0, 0.0));
+        mesh.addNode(new Vector(0.0, 1.0, 0.0));
+        int ids[] = {0, 1, 2};
+        mesh.addElement(ids);
+
+        Vector com = mesh.centroid(0);
+        assertEquals(com.getX(), -1.0/3.0, EPS);
+        assertEquals(com.getY(), 1.0/3.0, EPS);
+        assertEquals(com.getZ(), 0.0, EPS);
     }
 }

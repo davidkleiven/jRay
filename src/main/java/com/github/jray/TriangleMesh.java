@@ -111,4 +111,47 @@ public class TriangleMesh
         double[] coeff = this.barycentricTimeToHit(ray, element);
         return coeff[2];
     }
+
+    /**
+     * Bounding box of mesh
+     * @return
+     */
+    public Box boundingBox()
+    {
+        Box bbox = new Box();
+
+        bbox.xmin = nodes.get(0).getX();
+        bbox.ymin = nodes.get(0).getY();
+        bbox.zmin = nodes.get(0).getZ();
+        bbox.xmax = bbox.xmin;
+        bbox.ymax = bbox.ymin;
+        bbox.zmax = bbox.zmin;
+
+        for (Vector vec : nodes){
+            if (vec.getX() < bbox.xmin){
+                bbox.xmin = vec.getX();
+            }
+
+            if (vec.getX() > bbox.xmax){
+                bbox.xmax = vec.getX();
+            }
+
+            if (vec.getY() < bbox.ymin){
+                bbox.ymin = vec.getY();
+            }
+
+            if (vec.getY() > bbox.ymax){
+                bbox.ymax = vec.getY();
+            }
+
+            if (vec.getZ() < bbox.zmin){
+                bbox.zmin = vec.getZ();
+            }
+
+            if (vec.getZ() > bbox.zmax){
+                bbox.zmax = vec.getZ();
+            }
+        }
+        return bbox;
+    }
 }

@@ -57,4 +57,22 @@ public class TriangleMeshTest
         assertEquals(com.getY(), 1.0/3.0, EPS);
         assertEquals(com.getZ(), 0.0, EPS);
     }
+
+    @Test
+    public void testBoundingBox()
+    {
+        TriangleMesh mesh = new TriangleMesh();
+        mesh.addNode(new Vector(0.0, 0.0, 0.0));
+        mesh.addNode(new Vector(1.5, 3.2, 1.7));
+        mesh.addNode(new Vector(-1.2, 3.3, 0.2));
+        mesh.addNode(new Vector(2.0, -2.0, 1.0));
+        Box bbox = mesh.boundingBox();
+
+        assertEquals(-1.2, bbox.xmin, EPS);
+        assertEquals(-2.0, bbox.ymin, EPS);
+        assertEquals(0.0, bbox.zmin, EPS);
+        assertEquals(2.0, bbox.xmax, EPS);
+        assertEquals(3.3, bbox.ymax, EPS);
+        assertEquals(1.7, bbox.zmax, EPS);
+    }
 }

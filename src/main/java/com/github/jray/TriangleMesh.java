@@ -23,6 +23,14 @@ public class TriangleMesh
         nodeIds.add(ids);
     }
 
+    public void translate(Vector transVec)
+    {
+        for (Vector vec : nodes)
+        {
+            vec.isubtract(transVec);
+        }
+    }
+
     public int numElements()
     {
         return nodeIds.size();

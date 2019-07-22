@@ -3,9 +3,11 @@ package com.github.jray;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
+import javafx.scene.Parent;
+import javafx.fxml.FXMLLoader;
+
 /**
- * Hello world!
+ * jRay Application
  *
  */
 public class App extends Application
@@ -16,10 +18,10 @@ public class App extends Application
     }
 
     @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Hello World!");
+    public void start(Stage primaryStage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("/view/parameterInput.fxml"));
         
-        StackPane root = new StackPane();
+        primaryStage.setTitle("jRay");
         primaryStage.setScene(new Scene(root, 300, 250));
         primaryStage.show();
     }

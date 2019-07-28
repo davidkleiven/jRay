@@ -5,13 +5,13 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<StackPane fx:controller="com.github.jray.App" 
+<StackPane fx:controller="com.github.jray.App" fx:id="paramInputMainPane"
     xmlns:fx="http://javafx.com/fxml" minHeight="126.0" prefHeight="126.0" prefWidth="200.0">
 <padding><Insets top="25" right="25" bottom="10" left="25"/></padding>
 
 <MenuButton fx:id="addCardButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="180.0" text="Add Card">
   <items>
-    <MenuItem mnemonicParsing="false" onAction="#addMeshGeometry" text="Meshed Geometry" />
+    <MenuItem mnemonicParsing="false" fx:id="addMeshGeometry" onAction="#addMeshGeometry" text="Meshed Geometry" />
   </items>
 </MenuButton>
 

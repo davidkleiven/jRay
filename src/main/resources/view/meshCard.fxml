@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml">
+    <Label text="GMSH file"/>
+    <TextField fx:id="gmshFile"/>
+    <Label text="dx"/>
+    <TextField fx:id="dx"/>
+    <Label text="dy"/>
+    <TextField fx:id="dy"/>
+    <Label text="dz"/>
+    <TextField fx:id="dz"/>
+    <Button fx:id="removeMeshCard" text="Remove"/>
+</fx:root>

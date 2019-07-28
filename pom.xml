@@ -48,6 +48,13 @@
       <artifactId>javafx-fxml</artifactId>
       <version>12</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.testfx/testfx-core -->
+    <dependency>
+        <groupId>org.testfx</groupId>
+        <artifactId>testfx-core</artifactId>
+        <version>4.0.15-alpha</version>
+        <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

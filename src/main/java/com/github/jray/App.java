@@ -32,16 +32,14 @@ public class App extends Application
         Parent root = FXMLLoader.load(getClass().getResource("/view/parameterInput.fxml"));
         
         primaryStage.setTitle("jRay");
-        primaryStage.setScene(new Scene(root, 300, 250));
+        primaryStage.setScene(new Scene(root, 640, 480));
         primaryStage.show();
         System.out.println("Application started...");
     }
 
     @FXML
     private void addMeshGeometry(ActionEvent event){
-        System.out.println("Mesh was added");
-        MeshCardGUI card = new MeshCardGUI();
+        MeshCardGUI card = new MeshCardGUI(this.paramInputMainPane);
         this.paramInputMainPane.getChildren().add(card);
-        //this.getStage().getScene().add(card);
     }
 }

@@ -12,5 +12,5 @@
     <TextField fx:id="dy"/>
     <Label text="dz"/>
     <TextField fx:id="dz"/>
-    <Button fx:id="removeMeshCard" text="Remove"/>
+    <Button fx:id="removeMeshCard" text="Remove" onAction="#remove"/>
 </fx:root>
